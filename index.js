@@ -5,7 +5,7 @@ module.exports = (options) => ({
         const {
             _content
         } = $page
-        $page.content = _content.replace(/<[^>]+>/g, " ")
+        $page.content = _content //.replace(/<[^>]+>/g, " ")
     },
     alias: {
         '@SearchBox':
