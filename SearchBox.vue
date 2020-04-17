@@ -14,7 +14,7 @@
       @keyup.up="onUp"
       @keyup.down="onDown"
       ref="input"
-    >
+    />
     <ul
       class="suggestions"
       v-if="showSuggestions"
@@ -29,14 +29,8 @@
         @mousedown="go(i)"
         @mouseenter="focus(i)"
       >
-        <a
-          :href="s.path"
-          @click.prevent
-        >
-          <span
-            class="page-title"
-            v-html="s.title || s.path"
-          ></span>
+        <a :href="s.path" @click.prevent>
+          <span class="page-title" v-html="s.title || s.path"></span>
         </a>
       </li>
     </ul>
@@ -45,143 +39,149 @@
 
 <script>
 import Flexsearch from "flexsearch";
+const fm = require("front-matter");
 
 /* global SEARCH_MAX_SUGGESTIONS, SEARCH_PATHS, SEARCH_HOTKEYS */
 export default {
-  data () {
+  data() {
     return {
-      query: '',
+      query: "",
       focused: false,
       focusIndex: 0,
       placeholder: undefined,
       index: null
-    }
+    };
   },
 
-  mounted () {
-    this.placeholder = this.$site.themeConfig.searchPlaceholder || ''
-    document.addEventListener('keydown', this.onHotkey)
+  mounted() {
+    this.placeholder = this.$site.themeConfig.searchPlaceholder || "";
+    document.addEventListener("keydown", this.onHotkey);
 
-    this.setupFlexSearch()
+    this.setupFlexSearch();
   },
 
-  beforeDestroy () {
-    document.removeEventListener('keydown', this.onHotkey)
+  beforeDestroy() {
+    document.removeEventListener("keydown", this.onHotkey);
   },
 
   computed: {
-    showSuggestions () {
-      return (
-        this.focused
-        && this.suggestions
-        && this.suggestions.length
-      )
+    showSuggestions() {
+      return this.focused && this.suggestions && this.suggestions.length;
     },
 
-    suggestions () {
-      const query = this.query.trim().toLowerCase()
+    suggestions() {
+      const query = this.query.trim().toLowerCase();
       if (!query) {
-        return
+        return;
       }
 
       const result = this.index.search(query, 10).map(page => {
         return {
           ...page,
           title: this.getQuerySnippet(page)
-        }
-      })
+        };
+      });
 
-      return result
+      return result;
     },
 
     // make suggestions align right when there are not enough items
-    alignRight () {
-      const navCount = (this.$site.themeConfig.nav || []).length
-      const repo = this.$site.repo ? 1 : 0
-      return navCount + repo <= 2
+    alignRight() {
+      const navCount = (this.$site.themeConfig.nav || []).length;
+      const repo = this.$site.repo ? 1 : 0;
+      return navCount + repo <= 2;
     }
   },
 
   methods: {
-    getPageLocalePath (page) {
+    getPageLocalePath(page) {
       for (const localePath in this.$site.locales || {}) {
-        if (localePath !== '/' && page.path.indexOf(localePath) === 0) {
-          return localePath
+        if (localePath !== "/" && page.path.indexOf(localePath) === 0) {
+          return localePath;
         }
       }
-      return '/'
+      return "/";
     },
 
-    isSearchable (page) {
-      let searchPaths = SEARCH_PATHS
+    isSearchable(page) {
+      let searchPaths = SEARCH_PATHS;
 
       // all paths searchables
-      if (searchPaths === null) { return true }
+      if (searchPaths === null) {
+        return true;
+      }
 
-      searchPaths = Array.isArray(searchPaths) ? searchPaths : new Array(searchPaths)
+      searchPaths = Array.isArray(searchPaths)
+        ? searchPaths
+        : new Array(searchPaths);
 
-      return searchPaths.filter(path => {
-        return page.path.match(path)
-      }).length > 0
+      return (
+        searchPaths.filter(path => {
+          return page.path.match(path);
+        }).length > 0
+      );
     },
 
-    onHotkey (event) {
-      if (event.srcElement === document.body && SEARCH_HOTKEYS.includes(event.key)) {
-        this.$refs.input.focus()
-        event.preventDefault()
+    onHotkey(event) {
+      if (
+        event.srcElement === document.body &&
+        SEARCH_HOTKEYS.includes(event.key)
+      ) {
+        this.$refs.input.focus();
+        event.preventDefault();
       }
     },
 
-    onUp () {
+    onUp() {
       if (this.showSuggestions) {
         if (this.focusIndex > 0) {
-          this.focusIndex--
+          this.focusIndex--;
         } else {
-          this.focusIndex = this.suggestions.length - 1
+          this.focusIndex = this.suggestions.length - 1;
         }
       }
     },
 
-    onDown () {
+    onDown() {
       if (this.showSuggestions) {
         if (this.focusIndex < this.suggestions.length - 1) {
-          this.focusIndex++
+          this.focusIndex++;
         } else {
-          this.focusIndex = 0
+          this.focusIndex = 0;
         }
       }
     },
 
-    go (i) {
+    go(i) {
       if (!this.showSuggestions) {
-        return
+        return;
       }
-      const path = this.suggestions[i].path
+      const path = this.suggestions[i].path;
 
       if (this.$route.path !== path) {
-        this.$router.push(this.suggestions[i].path)
-      };
+        this.$router.push(this.suggestions[i].path);
+      }
 
-      this.query = ''
-      this.focusIndex = 0
+      this.query = "";
+      this.focusIndex = 0;
     },
 
-    focus (i) {
-      this.focusIndex = i
+    focus(i) {
+      this.focusIndex = i;
     },
 
-    unfocus () {
-      this.focusIndex = -1
+    unfocus() {
+      this.focusIndex = -1;
     },
 
-    setupFlexSearch () {
+    setupFlexSearch() {
       let defaultOptions = {
         encode: "extra",
         tokenize: "full",
         threshold: 1,
         resolution: 3
-      }
-      let options = this.$site.themeConfig.flexSearchOptions || defaultOptions
+      };
+      let options = this.$site.themeConfig.flexSearchOptions || defaultOptions;
 
       options = {
         ...options,
@@ -189,44 +189,22 @@ export default {
           id: "key",
           field: ["title", "content"]
         }
-      }
+      };
       this.index = new Flexsearch(options);
       const { pages } = this.$site;
       this.index.add(pages);
     },
 
-    getQuerySnippet (page) {
-      const queryPosition = page.content.toLowerCase().indexOf(this.query)
-      const startIndex = queryPosition - 20 < 0 ? 0 : queryPosition - 20
-      const endIndex = queryPosition + 30
-      let querySnippet = page.content.slice(startIndex, endIndex)
-        .toLowerCase()
-        .replace(/[\W_]+/g, " ")
-
-      const queryWords = this.query.split(' ').filter((v, i, a) => !!v && a.indexOf(v) === i); 
-
-      let highlightedSnippet = ""
-      for (let i = 0; i < querySnippet.length;) {
-        const remainingSnippet = querySnippet.slice(i)
-        const matchingWord = queryWords.find(word => querySnippet.slice(i).startsWith(word))
-        if (matchingWord === undefined) {
-          highlightedSnippet += querySnippet[i]
-          i += 1
-        } else {
-          highlightedSnippet += `<strong class="text--primary">${matchingWord}</strong>`
-          i += matchingWord.length
-        }
-      }
-
-      if (highlightedSnippet) {
-        return `<strong class="text--primary">${page.title}</strong> > .. ${highlightedSnippet} ..`
+    getQuerySnippet(page) {
+      const frontMatter = fm(page.content.toLowerCase());
+      if (frontMatter.attributes.area) {
+        return `<strong class="text--primary">${page.title}</strong> > <span style="color: #bed62f;">area: ${frontMatter.attributes.area}</span>`;
       } else {
-        return page.title
+        return page.title;
       }
-    },
-
+    }
   }
-}
+};
 </script>
 
 <style lang="stylus">

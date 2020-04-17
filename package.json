@@ -1,18 +1,14 @@
 {
-  "name": "vuepress-plugin-flexsearch",
-  "version": "0.0.2",
+  "name": "vuepress-plugin-flexsearch-guidance-tooling",
+  "version": "1.0.0",
   "description": "Next-Generation full text search library for Vuepress",
   "main": "index.js",
   "publishConfig": {
     "access": "public"
   },
-  "scripts": {
-    "dev": "vuepress dev example/docs",
-    "build": "vuepress build example/docs"
-  },
   "repository": {
     "type": "git",
-    "url": "https://github.com/z3by/vuepress-plugin-flexsearch"
+    "url": "https://github.com/BartR96/vuepress-plugin-flexsearch"
   },
   "keywords": [
     "documentation",
@@ -22,11 +18,12 @@
     "search",
     "vuepress-plugin"
   ],
-  "author": "z3by <zoaby.am@gmail.com>",
+  "author": "BartR96 <bart.renders@infosupport.com>",
   "license": "MIT",
-  "homepage": "https://github.com/z3by/vuepress-plugin-flexsearch#readme",
+  "homepage": "https://github.com/BartR96/vuepress-plugin-flexsearch",
   "dependencies": {
     "flexsearch": "nextapps-de/flexsearch",
+    "front-matter": "^3.1.0",
     "vuepress": "^1.2.0"
   }
 }
