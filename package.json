@@ -1,6 +1,6 @@
 {
   "name": "vuepress-plugin-flexsearch-guidance-tooling",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "Next-Generation full text search library for Vuepress",
   "main": "index.js",
   "publishConfig": {
